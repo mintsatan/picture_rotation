@@ -63,6 +63,7 @@ int main(int argc, char **argv)
     {
       fclose(input);
       err("Can't create rotated image file\n");
+      free(img->data);
       return -1;
     }
 
@@ -73,10 +74,13 @@ int main(int argc, char **argv)
       fclose(input);
       fclose(output);
       err("Can't write in file\n");
+      free(img->data);
       return -1;
     }
 
     fclose(output);
+    free(img->data);
+    free(new_img->data);
   }
   else
   {
