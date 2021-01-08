@@ -40,6 +40,6 @@ enum read_status read_bmp_from_file(
 enum write_status write_bmp_to_file(
     FILE *file,
     struct bmp_header const *p_header,
-    struct image const *p_img);
+    struct image *p_img);
 
 #endif

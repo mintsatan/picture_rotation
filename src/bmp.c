@@ -16,6 +16,12 @@
   fprintf(f, PRI_SPECIFIER(header->name), header->name); \
   fprintf(f, "\n");
 
+static uint64_t getPadding(uint64_t width)
+{
+    const uint8_t mod_4 = width * 3 % 4;
+    return mod_4 ? 4 - mod_4 : 0;
+}
+
 void bmp_header_print(struct bmp_header const *header, FILE *f)
 {
   FOR_BMP_HEADER(PRINT_FIELD)
@@ -26,16 +32,14 @@ static enum read_status read_header(FILE *f, struct bmp_header *p_header)
   return !fread(p_header, sizeof(struct bmp_header), 1, f);
 }
 
-static enum write_status write_header(FILE *f, struct bmp_header *p_header)
+static enum write_status write_header(FILE *f, struct bmp_header const *p_header)
 {
   return !fwrite(p_header, sizeof(struct bmp_header), 1, f);
 }
 
 static enum read_status read_image(FILE *in, struct image *p_img)
 {
-  const uint8_t mod_4    = p_img->width * 3 % 4;
-  const uint64_t padding = mod_4 ? 4 - mod_4 : 0;
-
+  const uint64_t padding = getPadding(p_img->width);
   p_img->data =
     (struct pixel *)
       malloc(sizeof(struct pixel) * p_img->width * p_img->height);
@@ -50,9 +54,8 @@ static enum read_status read_image(FILE *in, struct image *p_img)
 
 static enum write_status write_image(FILE *out, struct image const *p_img)
 {
-  const uint8_t mod_4            = p_img->width * 3 % 4;
-  const uint64_t padding         = mod_4 ? 4 - mod_4 : 0;
   const struct pixel trash_pixel = {0};
+  const uint64_t padding = getPadding(p_img->width);
 
   for (size_t i = 0; i < p_img->height; i++) {
     fwrite(p_img->data + i * p_img->width, sizeof(struct pixel), p_img->width, out);
@@ -91,7 +94,7 @@ enum read_status read_bmp_from_file(
 
 enum write_status write_bmp_to_file(
     FILE *file,
-    struct bmp_header *p_header,
+    struct bmp_header const *p_header,
     struct image *p_img)
 {
   if (!file)

@@ -8,9 +8,7 @@ struct image rotate_copy_left(struct image image)
   const uint64_t w = image.width;
   const uint64_t h = image.height;
 
-  struct image new_image;
-  new_image.height = w;
-  new_image.width  = h;
+  struct image new_image = {.height = w, .width = h};
 
   new_image.data = (struct pixel *)malloc(sizeof(struct pixel) * h * w);
   for (size_t i = 0; i < h; i++)
