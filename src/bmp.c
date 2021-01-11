@@ -64,22 +64,22 @@ static enum write_status write_image(FILE *out, struct image const *p_img)
 
 enum read_status read_bmp_from_file(
         FILE *file,
-        struct bmp_header *p_header,
         struct image *p_img)
 {
+    struct bmp_header header;
     if (!file)
     {
         return READ_INVALID_SIGNATURE;
     }
 
-    if (read_header(file, p_header))
+    if (read_header(file, &header))
     {
         err("Can't read header\n");
         return READ_INVALID_HEADER;
     }
 
-    p_img->width  = p_header->biWidth;
-    p_img->height = p_header->biHeight;
+    p_img->width  = header.biWidth;
+    p_img->height = header.biHeight;
     if (read_image(file, p_img))
     {
         err("Can't read image\n");

@@ -49,10 +49,9 @@ int main(int argc, char **argv)
         direction = LEFT_ROTATE;
     }
 
-    struct bmp_header header = {0};
     struct image img = {0};
 
-    if (!read_bmp_from_file(input, &header, &img))
+    if (!read_bmp_from_file(input, &img))
     {
         struct image new_img = direction == LEFT_ROTATE ?
                                rotate_copy_left(img) :
@@ -66,8 +65,6 @@ int main(int argc, char **argv)
             return -1;
         }
 
-        header.biWidth  = new_img.width;
-        header.biHeight = new_img.height;
         if (write_bmp_to_file(output, &new_img))
         {
             fclose(input);
